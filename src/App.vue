@@ -45,4 +45,16 @@ a {
     text-decoration: none;
 }
 
+.el-collapse-item {
+    background: transparent !important;
+}
+
+.el-collapse-item__header {
+        background: transparent !important;
+    }
+   
+.el-collapse-item__content {
+  background: #eee;
+}
+
 </style>

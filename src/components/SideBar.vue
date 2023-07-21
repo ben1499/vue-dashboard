@@ -1,32 +1,37 @@
 <template>
     <div id="sidebar">
         <el-row class="tac">
-            <el-col :span="12">
-                
+            <el-col :span="12">  
                 <el-menu
                 default-active="1"
                 class="el-menu-vertical-demo"
                 @open="handleOpen"
                 @close="handleClose">
-                <i class="el-icon-s-unfold"></i>
-                    <router-link to="/" exact>
-                        <el-menu-item index="1">
-                            <i class="el-icon-menu"></i>
-                            <span>Show all Products</span>
-                        </el-menu-item>
-                    </router-link>
-                    <router-link to="/search" exact>
-                        <el-menu-item index="2">
-                            <i class="el-icon-document"></i>
-                            <span>Search Product</span>
-                        </el-menu-item>
-                    </router-link>
-                    <router-link to="/category" exact>
-                        <el-menu-item index="3">
-                            <i class="el-icon-setting"></i>
-                            <span>Product Category</span>
-                        </el-menu-item>
-                    </router-link>
+                <el-collapse>
+                <el-collapse-item name="1" class="something" style="background-color: #eee">
+                    <template slot="title">
+                        <i class="el-icon-s-unfold"></i>
+                    </template>
+                        <router-link to="/" exact>
+                            <el-menu-item index="1">
+                                <i class="el-icon-menu"></i>
+                                <span>Show all Products</span>
+                            </el-menu-item>
+                        </router-link>
+                        <router-link to="/search" exact>
+                            <el-menu-item index="2">
+                                <i class="el-icon-document"></i>
+                                <span>Search Product</span>
+                            </el-menu-item>
+                        </router-link>
+                        <router-link to="/category" exact>
+                            <el-menu-item index="3">
+                                <i class="el-icon-setting"></i>
+                                <span>Product Category</span>
+                            </el-menu-item>
+                        </router-link>
+                </el-collapse-item>
+                    </el-collapse>
                 </el-menu>
             </el-col>
         </el-row>
@@ -72,6 +77,34 @@
     ul {
         width: 100%;
     }
+
+    /* #something {
+        background-color: #eee !important;
+    } */
+
+    /* .el-collapse-item__header {
+        background-color: #eee !important;
+    }   
+
+    .el-collapse-item__wrap {
+        background-color: #EEE;
+    }
+
+    .el-collapse-item__wrap {
+        background-color: #eee;
+    }
+    .el-collapse-item {
+        background-color: #eee !important;
+    }
+
+    .el-collapse-item__content {
+    background: #eee !important;
+    } */
+
+    .el-collapse-item__header {
+        background: transparent !important;
+    }
+   
 
   </style>
   
