@@ -92,6 +92,7 @@ import axios from 'axios';
         setPage(val) {
             this.page = val
             const skipValue = this.page * this.pageSize - this.pageSize;
+            this.loading = true;
             this.fetchData(skipValue);
         },
         sendInputEvent() {
