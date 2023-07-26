@@ -6,6 +6,7 @@
             <el-button type="primary" plain @click="showResults('laptops')">Laptops</el-button>
             <el-button type="primary" plain @click="showResults('fragrances')">Fragrances</el-button>
             <el-button type="primary" plain @click="showResults('skincare')">Skincare</el-button>
+            <el-button type="primary" plain @click="showResults('home-decoration')">Home Decoration</el-button>
         </div>
         <template>
             <el-table

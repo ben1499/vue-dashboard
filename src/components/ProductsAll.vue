@@ -3,6 +3,20 @@
         <div class="top-menu">
             <p>All products</p>
             <el-input @input="sendInputEvent" v-model="searchInput"></el-input>
+            <el-dropdown>
+                <el-button type="primary">
+                    Filter<i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                    <!-- <el-dropdown-item v-for="(category, index) in categories" :key="index">{{ category }}</el-dropdown-item> -->
+                    <el-dropdown-item v-for="(category, index) in categories" :key="index">
+                        <el-checkbox-group v-model="checkList" @change="sendCheckList">
+                            <el-checkbox :label="category"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-dropdown-item>
+                    <el-dropdown-item><li @click="handleReset">Reset</li></el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
         </div>
         <template v-if="isMainSeen">
             <el-table
@@ -48,16 +62,23 @@
                 <p class="small-text">Showing {{ page }} of 3</p>
             </div>
         </template>
-        <!-- <search-table :searchInput="searchInput"></search-table> -->
+        <search-table v-if="isSearchTableSeen" :searchInput="searchInput"></search-table>
+        <category-table v-if="isCategoryTableSeen" :isCategoryTableSeen="isCategoryTableSeen"></category-table>
+        {{ checkList }}
     </div>
   </template>
   
 <script>
 import axios from 'axios';
-// import SearchTable from './SearchTable.vue';
+import { bus } from '../main'
+import SearchTable from './SearchTable.vue';
+import CategoryTable from './CategoryTable.vue';
+
+
   export default {
     components: {
-        // 'search-table': SearchTable,
+        'search-table': SearchTable,
+        'category-table': CategoryTable,
     },
     data() {
         return {
@@ -66,7 +87,11 @@ import axios from 'axios';
             pageSize: 6,
             loading: true,
             searchInput: '',
-            isMainSeen: true
+            isMainSeen: true,
+            categories: [],
+            checkList: [],
+            isSearchTableSeen: false,
+            isCategoryTableSeen: false,
         }
     },
     props: {
@@ -74,6 +99,7 @@ import axios from 'axios';
     },
     mounted() {
         this.fetchData(0);
+        this.getCategories();
     },
     methods: {
         fetchData(skipNumber) {
@@ -96,7 +122,28 @@ import axios from 'axios';
             this.fetchData(skipValue);
         },
         sendInputEvent() {
-            this.$emit('input-change');
+            // this.$emit('input-change');
+            this.isMainSeen = false;
+            this.isSearchTableSeen = true;
+            bus.$emit('input-change', this.searchInput);
+        },
+        getCategories() {
+            axios.get(`https://dummyjson.com/products/categories`).then((response) => {
+                this.categories = response.data.slice(0, 6);
+            })
+        }, 
+        sendCheckList() {
+            this.isMainSeen = false;
+            this.isSearchTableSeen = false;
+            this.isCategoryTableSeen = true;
+            bus.$emit('filter-change', this.checkList);
+        },
+        handleReset() {
+            this.checkList = [];
+            bus.$emit('filter-change', this.checkList);
+            this.isMainSeen = true;
+            this.isCategoryTableSeen = false;
+            this.isSearchTableSeen = false;
         }
     },
     computed: {

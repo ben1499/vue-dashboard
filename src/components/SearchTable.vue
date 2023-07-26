@@ -1,9 +1,9 @@
 <template>
-    <div class="search-table">
-        <template @input-change="fetchSearchData(searchInput)">
+    <div  class="search-table">
+        <template>
             <el-table
             v-loading="loading"
-            :data="productsData"
+            :data="pagedProductsData"
             style="width: 100%">
             <el-table-column
                 prop="title"
@@ -47,22 +47,46 @@
 
 <script>
 import axios from 'axios';
+import { bus } from '../main'
 
   export default {
     data() {
         return {
-            loading: false,
+            loading: true,
+            productsData: [],
+            page: 1,
+            pageSize: 6
         }
     },
     props: {
         searchInput: String
     },
     methods: {
-        fetchSearchData(searchInput) {
-            axios.get(`https://dummyjson.com/products/search?q=${searchInput}`).then((response) => {
-                console.log(response)
+        fetchSearchData(searchInput, skipNumber) {
+            axios.get(`https://dummyjson.com/products/search?q=${searchInput}&skip=${skipNumber}`).then((response) => {
+                this.loading = false;   
+                this.productsData = response.data.products;
+            }).catch((err) => {
+                console.log(err);
             })
+        },
+        setPage(val) {
+            this.page = val;
+            const skipValue = this.page * this.pageSize - this.pageSize;
+            this.loading = true;
+            this.fetchSearchData(this.searchInput, skipValue);
+        },
+    },
+    computed: {
+        pagedProductsData() {
+            return this.productsData.slice(this.pageSize * this.page - this.pageSize, this.pageSize * this.page)
         }
+    },
+    created() {
+        bus.$on('input-change', (data) => {
+            this.isSearchTableSeen = true;
+            this.fetchSearchData(data, 0);
+        });
     }
   }
 </script>

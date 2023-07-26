@@ -1,40 +1,31 @@
 <template>
     <div id="sidebar">
-        <el-row class="tac">
-            <el-col :span="12">  
-                <el-menu
-                default-active="1"
-                class="el-menu-vertical-demo"
-                @open="handleOpen"
-                @close="handleClose">
-                <el-collapse>
-                <el-collapse-item name="1" class="something" style="background-color: #eee">
-                    <template slot="title">
-                        <i class="el-icon-s-unfold"></i>
-                    </template>
+        <el-button class="toggle-btn" v-model="isCollapse" @click="isCollapse = !isCollapse">
+            <i class="el-icon-s-unfold"></i>
+        </el-button>
+            <el-menu
+            default-active="1"
+            class="el-menu-vertical-demo"
+            @open="handleOpen"
+            @close="handleClose"
+            :collapse="isCollapse">
+                <!-- <template slot="title">
+                    <i class="el-icon-s-unfold"></i>
+                </template> -->
+                    <el-menu-item index="1">
                         <router-link to="/" exact>
-                            <el-menu-item index="1">
-                                <i class="el-icon-menu"></i>
-                                <span>Show all Products</span>
-                            </el-menu-item>
+                            <i class="el-icon-menu"></i>
+                            <span>Show all Products</span>
                         </router-link>
-                        <router-link to="/search" exact>
-                            <el-menu-item index="2">
-                                <i class="el-icon-document"></i>
-                                <span>Search Product</span>
-                            </el-menu-item>
-                        </router-link>
+                    </el-menu-item>
+                    <el-menu-item index="2">
                         <router-link to="/category" exact>
-                            <el-menu-item index="3">
-                                <i class="el-icon-setting"></i>
-                                <span>Product Category</span>
-                            </el-menu-item>
+                            <i class="el-icon-setting"></i>
+                            <span>Product Category</span>
                         </router-link>
-                </el-collapse-item>
-                    </el-collapse>
-                </el-menu>
-            </el-col>
-        </el-row>
+                    </el-menu-item>
+            </el-menu>
+
     </div>
   </template>
   
@@ -43,6 +34,11 @@
     name: 'SideBar',
     props: {
       msg: String
+    },
+    data() {
+        return {
+            isCollapse: true
+        }
     },
     methods: {
         handleOpen(key, keyPath) {
@@ -60,49 +56,27 @@
     #sidebar {
         grid-row: 1 / 3;
         grid-column: 1 / 2;
-        
-    }
-
-    .el-menu {
+        padding-top: 20px;
         background-color: #eee;
-        height: 100vh;
-        padding-left: 20px;
-        padding-top: 30px;
+        margin-right: -10px;
     }
 
-    .el-col-12 {
-        width: 100%;
-    }
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 240px;
+    min-height: 400px;
+    background: #eee;
+}
 
-    ul {
-        width: 100%;
-    }
-
-    /* #something {
-        background-color: #eee !important;
-    } */
-
-    /* .el-collapse-item__header {
-        background-color: #eee !important;
-    }   
-
-    .el-collapse-item__wrap {
-        background-color: #EEE;
-    }
-
-    .el-collapse-item__wrap {
-        background-color: #eee;
-    }
-    .el-collapse-item {
-        background-color: #eee !important;
-    }
-
-    .el-collapse-item__content {
-    background: #eee !important;
-    } */
-
+.el-menu--collapse {
+    background: #eee;
+}
     .el-collapse-item__header {
         background: transparent !important;
+    }
+
+    .toggle-btn {
+        border: none;
+        background: none;
     }
    
 

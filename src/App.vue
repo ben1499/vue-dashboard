@@ -30,7 +30,7 @@ export default {
   height: 100vh;
   color: #2c3e50;
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
   gap: 10px;
 
