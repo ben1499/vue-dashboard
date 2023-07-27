@@ -1,19 +1,28 @@
 <template>
   <div id="item">
+    <router-link to="/">
+      <el-button>Go back</el-button>
+    </router-link>
     <div>
-        <img :src="productData.images[0]" alt="">
-    </div>
-    <div class="details">
-        <p>{{ productData.brand }}</p>
-        <h1>{{ productData.title }} </h1>
-        <p>{{ productData.description }}</p>
-        <h2>$ {{ productData.price }}</h2>
+      <div>
+          <img :src="productData.images[0]" alt="">
+      </div>
+      <div class="details">
+          <p>{{ productData.brand }}</p>
+          <h1>{{ productData.title }} </h1>
+          <p>{{ productData.description }}</p>
+          <h2>$ {{ productData.price }}</h2>
+          <p>Items in stock: {{ productData.stock }}</p>
+          <p>Rating: {{ productData.rating }} out of 5</p>
+          <p>Category: {{ productData.category }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+
 
 export default {
   props: ['id'],
@@ -38,9 +47,13 @@ export default {
 <style scoped>
 #item {
   margin-left: 50px;
+  margin-top: 30px;
+}
+
+#item > div:first-of-type {
   display: flex;
   gap: 80px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 img {
@@ -52,5 +65,9 @@ img {
   width: 500px;
   margin-bottom: 30px;
   color: #585555;
+}
+
+.details > p:nth-of-type(3) {
+  margin-top: 20px;
 }
 </style>
