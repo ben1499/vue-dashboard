@@ -48,6 +48,8 @@
                         <router-link :to="{name: 'product', params: { id: scope.row.id }}">
                             <el-button>View Product</el-button>
                         </router-link>
+                            <el-button :loading="isDelete" @click="handleDelete(scope.row.id)">Delete</el-button>
+                        
                     </template>
                 </el-table-column>
             </el-table>
@@ -79,7 +81,8 @@ export default {
             pageSize: 6,
             nowShowing: '',
             searchInput: '',
-            currentPage: null
+            currentPage: null,
+            isDelete: false
         }
     },
     mounted(){
@@ -146,7 +149,20 @@ export default {
             } else {
                 this.page = val;
             }
-        },    
+        },
+        handleDelete(index) {
+            this.isDelete = true;
+            axios.delete(`https://dummyjson.com/products/${index}`).then((response) => {
+                this.isDelete = false;
+                console.log("Delete Success" + response);
+                this.productsData.forEach((product, proIndex) => {
+                if (product.id === index) {
+                    this.productsData.splice(proIndex, 1);
+                }
+            })
+            }).catch(err => console.log(err));
+            
+        }    
     },
     computed: {
             pagedProductsData() {

@@ -15,21 +15,35 @@
           <p>Items in stock: {{ productData.stock }}</p>
           <p>Rating: {{ productData.rating }} out of 5</p>
           <p>Category: {{ productData.category }}</p>
+          <div class="buttons">
+            <el-button @click="handleEdit" type="primary">Edit</el-button>
+            <el-button @click="handleDelete" :loading="isDelete" type="danger">Delete</el-button>
+          </div>
       </div>
     </div>
+    <success-modal :process="'Deleted'" v-if="showModal" class="success"></success-modal>
+    <edit-modal @submit-click="showEditModal = !showEditModal" @cancel-click="showEditModal = !showEditModal" v-if="showEditModal" :id="id"></edit-modal>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-
+import SuccessModal from './SuccessModal.vue';
+import EditModal from './EditModal.vue';
 
 export default {
   props: ['id'],
   data() {
     return {
       productData: {},
+      isDelete: false,
+      showModal: false,
+      showEditModal: false,
     }
+  },
+  components: {
+    SuccessModal,
+    EditModal
   },
   mounted() {
     this.showProductDetails();
@@ -39,6 +53,19 @@ export default {
       axios.get(`https://dummyjson.com/products/${this.id}`).then((response) => {
         this.productData = response.data;
       })
+    },
+    handleDelete() {
+      this.isDelete = true;
+      this.showModal = true;
+      axios.delete(`https://dummyjson.com/products/${this.id}`).then((response) => {
+         this.showModal = false;
+         console.log(response);
+         this.isDelete = false;
+         this.$router.push('/');
+      })
+    },
+    handleEdit() {
+      this.showEditModal = true;
     }
   }
 }
@@ -48,6 +75,14 @@ export default {
 #item {
   margin-left: 50px;
   margin-top: 30px;
+}
+
+#item::not(.success) {
+  -webkit-filter: blur(8px);
+    -ms-filter: blur(8px);
+    -moz-filter: blur(8px);
+    -o-filter: blur(8px);
+    filter: blur(8px);
 }
 
 #item > div:first-of-type {
@@ -68,6 +103,10 @@ img {
 }
 
 .details > p:nth-of-type(3) {
+  margin-top: 20px;
+}
+
+.buttons {
   margin-top: 20px;
 }
 </style>
