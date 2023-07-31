@@ -39,6 +39,7 @@ export default {
             }).catch(err => console.log(err))
         }, 
         sendCheckList() {
+            console.log(this.checkList)
             this.$emit('filter-change', this.checkList);
         },
         handleReset() {

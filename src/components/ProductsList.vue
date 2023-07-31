@@ -48,8 +48,7 @@
                         <router-link :to="{name: 'product', params: { id: scope.row.id }}">
                             <el-button>View Product</el-button>
                         </router-link>
-                            <el-button :loading="isDelete" @click="handleDelete(scope.row.id)">Delete</el-button>
-                        
+                            <el-button @click="handleDelete(scope.row.id)">Delete</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -82,7 +81,6 @@ export default {
             nowShowing: '',
             searchInput: '',
             currentPage: null,
-            isDelete: false
         }
     },
     mounted(){
@@ -102,10 +100,10 @@ export default {
             })
         },
         handleSelectedCategory(categoryList){
-            if (categoryList.length == 0) {
+            if (categoryList.length === 0) {
                 this.showAllProducts(0);
             }
-            if (categoryList.length >= 2) {
+            else if (categoryList.length >= 2) {
                 const category = categoryList[categoryList.length - 1];
                 axios.get(`https://dummyjson.com/products/category/${category}`).then((response) => {
                     const categoryData = response.data.products;
@@ -133,6 +131,10 @@ export default {
             axios.get(`https://dummyjson.com/products?limit=6&skip=${skipNumber}`).then((response) => {
                 this.loading = false;
                 this.productsData = response.data.products
+                // this.productsData.forEach((product) => {
+                //     product.isDisabled = false;
+                //     product.isDeleteDisabled = false;
+                // })
             }).catch(err => console.log(err));
         },
         setPage(val) {
@@ -151,17 +153,35 @@ export default {
             }
         },
         handleDelete(index) {
-            this.isDelete = true;
-            axios.delete(`https://dummyjson.com/products/${index}`).then((response) => {
-                this.isDelete = false;
-                console.log("Delete Success" + response);
-                this.productsData.forEach((product, proIndex) => {
-                if (product.id === index) {
-                    this.productsData.splice(proIndex, 1);
-                }
-            })
-            }).catch(err => console.log(err));
-            
+            this.$confirm('This will permanently delete the item. Continue?', 'Warning', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then(() => {
+                // this.productsData.forEach((product) => {
+                //         product.isDisabled = true;
+                //         product.isDeleteDisabled = true;
+                // })
+                axios.delete(`https://dummyjson.com/products/${index}`).then((response) => {
+                
+                    console.log("Delete Success" + response);
+                    
+                    this.productsData.forEach((product, proIndex) => {
+                        if (product.id === index) {
+                            this.productsData.splice(proIndex, 1);
+                        }
+                })
+                    this.$message({
+                        type: 'success',
+                        message: 'Delete completed'
+                });
+                }).catch(err => console.log(err));
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: 'Delete canceled'
+                });          
+            });
         }    
     },
     computed: {

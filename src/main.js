@@ -6,9 +6,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 import locale from 'element-ui/lib/locale/lang/en'
 import axios from 'axios';
 import Routes from './routes'
+import VueAxios from 'vue-axios' 
 
+Vue.use(VueAxios, axios)
 
-Vue.use(axios);
 Vue.use(VueRouter);
 Vue.config.productionTip = false
 Vue.use(ElementUI, { locale });

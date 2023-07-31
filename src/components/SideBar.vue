@@ -3,29 +3,22 @@
         <el-button class="toggle-btn" v-model="isCollapse" @click="isCollapse = !isCollapse">
             <i class="el-icon-s-unfold"></i>
         </el-button>
-            <el-menu
-            default-active="1"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            :collapse="isCollapse">
-                <!-- <template slot="title">
-                    <i class="el-icon-s-unfold"></i>
-                </template> -->
-                    <el-menu-item index="1">
-                        <router-link to="/" exact>
-                            <i class="el-icon-menu"></i>
-                            <span>Show all Products</span>
-                        </router-link>
-                    </el-menu-item>
-                    <el-menu-item index="2">
-                        <router-link to="/category" exact>
-                            <i class="el-icon-setting"></i>
-                            <span>Product Category</span>
-                        </router-link>
-                    </el-menu-item>
-            </el-menu>
-
+        <el-menu
+        default-active="/"
+        :router="true"
+        class="el-menu-vertical-demo"
+        @open="handleOpen"
+        @close="handleClose"
+        :collapse="isCollapse">
+            <el-menu-item index="/">
+                <i class="el-icon-menu"></i>
+                <span>Show all Products</span>
+            </el-menu-item>
+            <el-menu-item index="/category">
+                <i class="el-icon-setting"></i>
+                <span>Product Category</span>
+            </el-menu-item>
+        </el-menu>
     </div>
   </template>
   
