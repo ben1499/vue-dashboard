@@ -1,6 +1,6 @@
 <template>
   <div id="edit">
-    <el-form ref="form" :model="form" label-width="120px">
+    <el-form ref="form" :model="form" label-width="120px" v-loading="loading">
         <el-form-item label="Brand name">
             <el-input v-model="form.brand"></el-input>
         </el-form-item>
@@ -10,7 +10,7 @@
         <el-form-item label="Description">
             <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
-        <el-form-item label="Price">
+        <el-form-item label="Price($)">
             <el-input type="number" v-model="form.price"></el-input>
         </el-form-item>
         <el-form-item label="Items in stock">
@@ -27,23 +27,25 @@
             </el-select>
         </el-form-item> 
         <el-form-item>
-            <el-button type="primary" @click="onSubmit">Create</el-button>
-            <el-button @click="onCancel">Cancel</el-button>
+            <el-button type="primary" @click="onSubmit" :loading="btnLoading">Edit</el-button>
+            <!-- <el-button @click="onCancel">Cancel</el-button> -->
         </el-form-item>
     </el-form>
-    <success-modal :process="'Edited'" v-if="showModal"></success-modal>
+    <!-- <success-modal :process="'Edited'" v-if="showModal"></success-modal> -->
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import SuccessModal from './SuccessModal.vue';
+// import SuccessModal from './SuccessModal.vue';
 
 export default {
     components: {
-        SuccessModal
+        // SuccessModal
     },
-    props: ['id'],
+    props: {
+        id: Number,
+    },
     data() {
         return {
             form: {
@@ -54,21 +56,58 @@ export default {
                 category: '',
             },
             showModal: false,
+            loading: false,
+            btnLoading: false,
         }
     },
+    mounted() {
+        this.getProductDetails();
+    },
     methods: {
+        getProductDetails() {
+            this.loading = true;
+            axios.get(`https://dummyjson.com/products/${this.id}`).then((response) => {
+                this.loading = false;
+                this.form = response.data;
+            }).catch(err => console.log(err))
+        },
         onSubmit() {
-            this.showModal = true;
-            axios.patch(`https://dummyjson.com/products/${this.id}`, this.form).then((response) => {
+            this.$confirm('This will make changes to the product. Continue?', 'Warning', {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+            }).then(() => {
+                // this.showModal = true;
+                this.btnLoading = true;
+                axios.patch(`https://dummyjson.com/products/${this.id}`, {
+                brand: this.form.brand,
+                title: this.form.title,
+                description: this.form.description,
+                price: this.form.price,
+                category: this.form.category
+            }).then((response) => {
                 console.log(response);
                 this.$emit('submit-click');
-                this.showModal = false;
+                // this.showModal = false;
+                this.btnLoading = false;
                 this.$router.push('/');
             }).catch(err => console.log(err));
+                this.$message({
+                type: 'success',
+                message: 'Edited successfully'
+            });
+            }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: 'Delete canceled'
+            });          
+            });
+            
+
         },
-        onCancel() {
-            this.$emit('cancel-click')
-        }
+        // onCancel() {
+        //     this.$emit('cancel-click')
+        // }
     }
 }
 </script>

@@ -3,6 +3,9 @@
         <div id="controls">
             <search-comp @searchedText="handleSearchedProduct"></search-comp>
             <filter-comp @filter-change="handleSelectedCategory"></filter-comp>
+            <router-link to="/add">
+                <el-button type="info" class="add-btn el-icon-plus">Add New Product</el-button>
+            </router-link>
         </div>
         <div class="products">
             <el-table
@@ -45,10 +48,15 @@
                 </el-table-column>
                 <el-table-column label="Actions">
                     <template slot-scope="scope">
-                        <router-link :to="{name: 'product', params: { id: scope.row.id }}">
-                            <el-button>View Product</el-button>
-                        </router-link>
+                        <el-button-group>
+                            <router-link :to="{name: 'product', params: { id: scope.row.id }}">
+                                <el-button>View</el-button>
+                            </router-link>
+                            <router-link :to="{name: 'edit', params: { id: scope.row.id }}">
+                                <el-button>Edit</el-button>
+                            </router-link>
                             <el-button @click="handleDelete(scope.row.id)">Delete</el-button>
+                        </el-button-group>
                     </template>
                 </el-table-column>
             </el-table>
@@ -162,27 +170,36 @@ export default {
                 //         product.isDisabled = true;
                 //         product.isDeleteDisabled = true;
                 // })
-                axios.delete(`https://dummyjson.com/products/${index}`).then((response) => {
-                
-                    console.log("Delete Success" + response);
-                    
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });                    
+                axios.delete(`https://dummyjson.com/products/${index}`).then(() => {
+                    loading.close()
                     this.productsData.forEach((product, proIndex) => {
-                        if (product.id === index) {
-                            this.productsData.splice(proIndex, 1);
-                        }
-                })
+
+                            if (product.id === index) {
+                                this.productsData.splice(proIndex, 1);
+                            }
+                    })
                     this.$message({
-                        type: 'success',
-                        message: 'Delete completed'
+                            type: 'success',
+                            message: 'Delete completed'
+                    });
+                }).catch(err => {
+                    loading.close()
+                    console.log(err)
                 });
-                }).catch(err => console.log(err));
             }).catch(() => {
+                
                 this.$message({
                     type: 'info',
                     message: 'Delete canceled'
                 });          
             });
-        }    
+        },
     },
     computed: {
             pagedProductsData() {
@@ -212,6 +229,10 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 0 30px; 
+}
+
+.add-btn {
+    margin-left: 30px;
 }
 
 </style>

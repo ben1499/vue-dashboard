@@ -1,14 +1,12 @@
 <template>
     <div id="sidebar">
-        <el-button class="toggle-btn" v-model="isCollapse" @click="isCollapse = !isCollapse">
+        <el-button class="toggle-btn" v-model="isCollapse" @click="collapseMenu">
             <i class="el-icon-s-unfold"></i>
         </el-button>
         <el-menu
         default-active="/"
         :router="true"
         class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose"
         :collapse="isCollapse">
             <el-menu-item index="/">
                 <i class="el-icon-menu"></i>
@@ -30,16 +28,23 @@
     },
     data() {
         return {
-            isCollapse: true
+            isCollapse: JSON.parse(localStorage.getItem('collapseState')),
         }
     },
     methods: {
-        handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      }
+        collapseMenu() {
+            this.isCollapse = !this.isCollapse
+            localStorage.collapseState = JSON.stringify(this.isCollapse);
+        }
+    },
+    beforeCreate() {
+        if (!localStorage.collapseState) {
+            console.log("Top block called");
+            localStorage.setItem('collapseState', JSON.stringify(true));
+            this.isCollapse = JSON.parse(localStorage.getItem('collapseState'));
+        } else {
+            this.isCollapse = JSON.parse(localStorage.getItem('collapseItem'));
+        }
     }
   }
   </script>

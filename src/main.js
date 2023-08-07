@@ -7,6 +7,7 @@ import locale from 'element-ui/lib/locale/lang/en'
 import axios from 'axios';
 import Routes from './routes'
 import VueAxios from 'vue-axios' 
+import { setAuthHeader } from './utils/setAuthHeader';
 
 Vue.use(VueAxios, axios)
 
@@ -18,6 +19,12 @@ const router = new VueRouter({
   routes: Routes,
   mode: 'history'
 });
+
+if (localStorage.token) {
+  setAuthHeader(localStorage.token) 
+} else {
+  setAuthHeader(false);
+}
 
 export const bus = new Vue();
 

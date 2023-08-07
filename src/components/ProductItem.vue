@@ -1,9 +1,9 @@
 <template>
-  <div id="item">
+  <div id="item" >
     <router-link to="/">
       <el-button>Go back</el-button>
     </router-link>
-    <div>
+    <div v-if="productData">
       <div>
           <img :src="productData.images[0]" alt="">
       </div>
@@ -16,57 +16,76 @@
           <p>Rating: {{ productData.rating }} out of 5</p>
           <p>Category: {{ productData.category }}</p>
           <div class="buttons">
-            <el-button @click="handleEdit" type="primary">Edit</el-button>
+            <router-link :to="{name: 'edit', params: {id: id}}">
+              <el-button type="primary">Edit</el-button>
+            </router-link>
             <el-button @click="handleDelete" :loading="isDelete" type="danger">Delete</el-button>
           </div>
       </div>
     </div>
-    <success-modal :process="'Deleted'" v-if="showModal" class="success"></success-modal>
-    <edit-modal @submit-click="showEditModal = !showEditModal" @cancel-click="showEditModal = !showEditModal" v-if="showEditModal" :id="id"></edit-modal>
+    <!-- <success-modal :process="'Deleted'" v-if="showModal" class="success"></success-modal> -->
+    <!-- <edit-modal @submit-click="showEditModal = !showEditModal" @cancel-click="showEditModal = !showEditModal" v-if="showEditModal" :id="id"></edit-modal> -->
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import SuccessModal from './SuccessModal.vue';
-import EditModal from './EditModal.vue';
+// import SuccessModal from './SuccessModal.vue';
+
 
 export default {
-  props: ['id'],
+  props: {
+    id: null
+  },
   data() {
     return {
-      productData: {},
+      productData: null,
       isDelete: false,
-      showModal: false,
-      showEditModal: false,
+      fullScreenLoading: false,
     }
-  },
-  components: {
-    SuccessModal,
-    EditModal
   },
   mounted() {
     this.showProductDetails();
   },
   methods: {
     showProductDetails() {
-      axios.get(`https://dummyjson.com/products/${this.id}`).then((response) => {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      axios.get(`https://dummyjson.com/products/${this.id}`)
+      .then((response) => {
+        loading.close()
         this.productData = response.data;
       })
+      .catch(err => console.log(err))
     },
     handleDelete() {
-      this.isDelete = true;
-      this.showModal = true;
-      axios.delete(`https://dummyjson.com/products/${this.id}`).then((response) => {
-         this.showModal = false;
-         console.log(response);
-         this.isDelete = false;
-         this.$router.push('/');
-      })
+      this.$confirm('This will permanently delete the file. Continue?', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.isDelete = true;
+          axios.delete(`https://dummyjson.com/products/${this.id}`).then((response) => {
+            console.log(response);
+            this.isDelete = false;
+            this.$router.push('/');
+          })
+          this.$message({
+            type: 'success',
+            message: 'Delete completed'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          });          
+        });
     },
-    handleEdit() {
-      this.showEditModal = true;
-    }
+
   }
 }
 </script>
@@ -108,5 +127,9 @@ img {
 
 .buttons {
   margin-top: 20px;
+}
+
+a {
+  margin-right: 20px;
 }
 </style>
